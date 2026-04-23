@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLOW — Women's Workout Playlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #FF4D7E;
+    --peach: #FF8C61;
+    --lavender: #B06FE8;
+    --mint: #3EDCB0;
+    --gold: #FFB347;
+    --dark: #0E0C12;
+    --card: #17141F;
+    --muted: #888;
+    --white: #F8F4FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 20%, rgba(255,77,126,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 90% 80%, rgba(176,111,232,0.11) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 50% 50%, rgba(62,220,176,0.06) 0%, transparent 70%);
+    z-index: 0; pointer-events: none;
+  }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 28px 16px 60px;
+  }
+  header { text-align: center; margin-bottom: 32px; }
+  .logo {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: clamp(52px, 14vw, 96px);
+    letter-spacing: -2px; line-height: 0.9;
+    background: linear-gradient(135deg, var(--rose), var(--peach), var(--lavender));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    display: inline-block;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.15)} }
+  .tagline {
+    font-size: 13px; font-weight: 700; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--mint); margin-top: 6px;
+  }
+  .filters {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center; margin-bottom: 28px;
+  }
+  .filter-btn {
+    background: var(--card); border: 1.5px solid #2e2a38;
+    color: var(--muted); border-radius: 40px;
+    padding: 8px 18px; font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--rose), var(--lavender));
+    border-color: transparent; color: #fff;
+    box-shadow: 0 0 18px rgba(255,77,126,0.35);
+  }
+  .generate-wrap { text-align: center; margin-bottom: 36px; }
+  .generate-btn {
+    background: linear-gradient(135deg, var(--rose) 0%, var(--peach) 50%, var(--lavender) 100%);
+    border: none; color: #fff;
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 20px; letter-spacing: 2px;
+    padding: 16px 44px; border-radius: 50px; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 30px rgba(255,77,126,0.35);
+    text-transform: uppercase;
+  }
+  .generate-btn:hover { transform: scale(1.04); box-shadow: 0 8px 40px rgba(255,77,126,0.5); }
+  .generate-btn:active { transform: scale(0.98); }
+  .timer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border: 1px solid #26222f;
+    border-radius: 16px; padding: 14px 20px; margin-bottom: 24px;
+  }
+  .timer-label { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .timer-total { font-family: 'Black Han Sans', sans-serif; font-size: 24px; color: var(--mint); }
+  .progress-track { flex: 1; height: 8px; background: #2a2535; border-radius: 99px; margin: 0 16px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--rose), var(--lavender)); border-radius: 99px; transition: width 0.5s ease; }
+  .playlist { display: flex; flex-direction: column; gap: 12px; }
+  .workout-card {
+    background: var(--card); border: 1px solid #252030;
+    border-radius: 16px; padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color 0.2s, transform 0.15s;
+    animation: slideIn 0.35s ease both;
+    text-decoration: none; color: inherit; cursor: pointer;
+  }
+  .workout-card:hover { border-color: var(--rose); transform: translateX(4px); }
+  @keyframes slideIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .card-num { font-family: 'Black Han Sans', sans-serif; font-size: 22px; color: #3a333f; min-width: 30px; text-align: center; }
+  .tag-dot { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .card-info { flex: 1; min-width: 0; }
+  .card-title { font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--white); margin-bottom: 3px; }
+  .card-meta { font-size: 12px; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .meta-tag { background: #252030; border-radius: 6px; padding: 2px 8px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+  .card-duration { font-family: 'Black Han Sans', sans-serif; font-size: 17px; color: var(--gold); min-width: 50px; text-align: right; }
+  .yt-btn {
+    background: var(--rose); border: none; border-radius: 8px; color: #fff;
+    font-size: 11px; font-weight: 800; padding: 5px 10px; cursor: pointer;
+    letter-spacing: 0.5px; text-transform: uppercase; text-decoration: none;
+    white-space: nowrap; transition: background 0.15s;
+  }
+  .yt-btn:hover { background: #e0345f; }
+  .empty-state { text-align: center; padding: 60px 20px; color: #444; }
+  .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
+  .empty-state p { font-size: 16px; font-weight: 700; }
+  .section-label { font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; padding-left: 4px; }
+  .segment-divider { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; }
+  .seg-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .seg-line { flex: 1; height: 1px; background: #28222f; }
+  .warmup-label { background: rgba(62,220,176,0.15); color: var(--mint); }
+  .main-label { background: rgba(255,77,126,0.15); color: var(--rose); }
+  .cool-label { background: rgba(176,111,232,0.15); color: var(--lavender); }
+  footer { text-align: center; margin-top: 40px; font-size: 11px; color: #444; font-weight: 600; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">GLOW</div>
+    <div class="tagline">Women's 60-Min Workout Playlist Generator ✨</div>
+  </header>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">✨ All Styles</button>
+    <button class="filter-btn" data-cat="dance">💃 Dance Cardio</button>
+    <button class="filter-btn" data-cat="hiit">⚡ HIIT</button>
+    <button class="filter-btn" data-cat="pilates">🌸 Pilates</button>
+    <button class="filter-btn" data-cat="strength">💪 Strength</button>
+    <button class="filter-btn" data-cat="yoga">🧘 Yoga Flow</button>
+  </div>
+
+  <div class="generate-wrap">
+    <button class="generate-btn" id="generateBtn">✨ Generate My Playlist</button>
+  </div>
+
+  <div id="playlistSection" style="display:none">
+    <div class="timer-bar">
+      <span class="timer-label">Total Time</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span class="timer-total" id="timerTotal">0 min</span>
+    </div>
+    <div class="section-label" id="playlistLabel"></div>
+    <div class="playlist" id="playlist"></div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="icon">🌸</div>
+    <p>Pick your style & hit Generate!</p>
+  </div>
+
+  <footer>LINKS OPEN YOUTUBE SEARCH · ALWAYS WARM UP & LISTEN TO YOUR BODY</footer>
+</div>
+
+<script>
+const videos = {
+  warmup: [
+    { title: "5-Min Full Body Warm Up for Women", channel: "Sydney Cummings", duration: 5, cat: "hiit", emoji: "⚡", search: "Sydney Cummings 5 minute warm up women" },
+    { title: "Pilates Warm Up – Gentle Activation", channel: "Move with Nicole", duration: 5, cat: "pilates", emoji: "🌸", search: "Move with Nicole pilates warm up gentle" },
+    { title: "Dance Cardio Warm Up Party", channel: "Fitness Marshall", duration: 5, cat: "dance", emoji: "💃", search: "Fitness Marshall dance cardio warm up" },
+    { title: "Yoga Flow Morning Warm Up", channel: "Yoga with Adriene", duration: 6, cat: "yoga", emoji: "🧘", search: "Yoga with Adriene morning flow warm up" },
+    { title: "Strength Training Warm Up – Women", channel: "Caroline Girvan", duration: 5, cat: "strength", emoji: "💪", search: "Caroline Girvan strength warm up women" },
+    { title: "Low Impact Warm Up – All Levels", channel: "Pahla B Fitness", duration: 5, cat: "dance", emoji: "💃", search: "Pahla B Fitness low impact warm up women" },
+  ],
+  main: [
+    // Dance Cardio
+    { title: "30-Min Dance Cardio Party – Pop Hits", channel: "Fitness Marshall", duration: 30, cat: "dance", emoji: "💃", search: "Fitness Marshall 30 minute dance cardio pop hits women" },
+    { title: "Latin Dance Workout – Full Body Burn", channel: "BollyX", duration: 25, cat: "dance", emoji: "💃", search: "BollyX latin dance workout full body burn women" },
+    { title: "Zumba 30-Min Total Body Dance", channel: "Zumba Official", duration: 30, cat: "dance", emoji: "💃", search: "Zumba Official 30 minute total body dance women" },
+    { title: "K-Pop Dance Workout – Fun Cardio", channel: "Emi Wong", duration: 25, cat: "dance", emoji: "💃", search: "Emi Wong kpop dance workout cardio women" },
+    { title: "Afrobeats Dance Fitness Full Workout", channel: "Kukuwa Fitness", duration: 30, cat: "dance", emoji: "💃", search: "Kukuwa Fitness afrobeats dance full workout women" },
+    // HIIT
+    { title: "30-Min Women's HIIT – No Equipment", channel: "Sydney Cummings", duration: 30, cat: "hiit", emoji: "⚡", search: "Sydney Cummings 30 minute HIIT women no equipment" },
+    { title: "Full Body HIIT – Torch Calories Fast", channel: "Heather Robertson", duration: 30, cat: "hiit", emoji: "⚡", search: "Heather Robertson 30 min full body HIIT women" },
+    { title: "25-Min HIIT for Women – Sweat & Burn", channel: "Emi Wong", duration: 25, cat: "hiit", emoji: "⚡", search: "Emi Wong 25 minute HIIT for women" },
+    { title: "Low Impact HIIT – Joint Friendly", channel: "Pahla B Fitness", duration: 25, cat: "hiit", emoji: "⚡", search: "Pahla B low impact HIIT women joint friendly" },
+    // Pilates
+    { title: "30-Min Full Body Pilates for Women", channel: "Move with Nicole", duration: 30, cat: "pilates", emoji: "🌸", search: "Move with Nicole 30 minute full body pilates women" },
+    { title: "Pilates Core & Glutes – Sculpt & Tone", channel: "Blogilates", duration: 25, cat: "pilates", emoji: "🌸", search: "Blogilates pilates core glutes sculpt tone women" },
+    { title: "Mat Pilates Full Workout – All Levels", channel: "Sydney Cummings", duration: 30, cat: "pilates", emoji: "🌸", search: "Sydney Cummings mat pilates full workout women" },
+    { title: "Reformer-Inspired Pilates at Home", channel: "Move with Nicole", duration: 25, cat: "pilates", emoji: "🌸", search: "Move with Nicole reformer pilates at home women" },
+    // Strength
+    { title: "30-Min Dumbbell Strength for Women", channel: "Caroline Girvan", duration: 30, cat: "strength", emoji: "💪", search: "Caroline Girvan 30 minute dumbbell strength women" },
+    { title: "Full Body Tone – Lift & Sculpt", channel: "Lucy Wyndham-Read", duration: 25, cat: "strength", emoji: "💪", search: "Lucy Wyndham-Read full body tone lift sculpt women" },
+    { title: "Bodyweight Strength – No Equipment", channel: "Pamela Reif", duration: 25, cat: "strength", emoji: "💪", search: "Pamela Reif bodyweight strength women no equipment" },
+    { title: "Glutes & Core Strength Workout", channel: "Heather Robertson", duration: 30, cat: "strength", emoji: "💪", search: "Heather Robertson glutes core strength women 30 min" },
+    // Yoga Flow
+    { title: "30-Min Power Yoga Full Body Flow", channel: "Yoga with Adriene", duration: 30, cat: "yoga", emoji: "🧘", search: "Yoga with Adriene 30 minute power yoga full body flow" },
+    { title: "Vinyasa Flow – Energising Yoga", channel: "Breathe and Flow", duration: 25, cat: "yoga", emoji: "🧘", search: "Breathe and Flow vinyasa yoga energising women" },
+    { title: "Yoga for Weight Loss – Full Practice", channel: "Yoga with Bird", duration: 30, cat: "yoga", emoji: "🧘", search: "Yoga with Bird yoga for weight loss full practice women" },
+    { title: "Feel Good Yoga Flow – All Levels", channel: "Yoga with Adriene", duration: 25, cat: "yoga", emoji: "🧘", search: "Yoga with Adriene feel good flow all levels women" },
+  ],
+  cooldown: [
+    { title: "10-Min Full Body Stretch for Women", channel: "Sydney Cummings", duration: 10, cat: "hiit", emoji: "⚡", search: "Sydney Cummings 10 minute stretch cool down women" },
+    { title: "Post-Workout Pilates Stretch", channel: "Move with Nicole", duration: 8, cat: "pilates", emoji: "🌸", search: "Move with Nicole post workout pilates stretch cool down" },
+    { title: "Yoga Cool Down – Restore & Relax", channel: "Yoga with Adriene", duration: 10, cat: "yoga", emoji: "🧘", search: "Yoga with Adriene cool down restore relax women" },
+    { title: "Dance Cool Down – Slow Stretch", channel: "Fitness Marshall", duration: 8, cat: "dance", emoji: "💃", search: "Fitness Marshall dance cool down slow stretch women" },
+    { title: "Full Body Flexibility Stretch", channel: "Caroline Girvan", duration: 10, cat: "strength", emoji: "💪", search: "Caroline Girvan full body flexibility stretch cool down" },
+    { title: "Mindful Cool Down & Breathwork", channel: "Blogilates", duration: 10, cat: "pilates", emoji: "🌸", search: "Blogilates mindful cool down breathwork women" },
+  ]
+};
+
+let activeFilter = 'all';
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.cat;
+});
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function filterVideos(pool) {
+  if (activeFilter === 'all') return pool;
+  return pool.filter(v => v.cat === activeFilter);
+}
+
+function pickFrom(pool, targetMin) {
+  const filtered = filterVideos(pool);
+  const source = filtered.length >= 2 ? filtered : pool;
+  const shuffled = shuffle(source);
+  const result = [];
+  let total = 0;
+  for (const v of shuffled) {
+    if (total + v.duration <= targetMin + 3) {
+      result.push(v);
+      total += v.duration;
+    }
+    if (total >= targetMin) break;
+  }
+  return result;
+}
+
+function ytSearchUrl(s) { return `https://www.youtube.com/results?search_query=${encodeURIComponent(s)}`; }
+
+function tagColors(cat) {
+  const map = {
+    dance:    { bg: 'rgba(255,77,126,0.18)', color: '#FF4D7E' },
+    hiit:     { bg: 'rgba(255,140,97,0.18)', color: '#FF8C61' },
+    pilates:  { bg: 'rgba(255,179,71,0.18)', color: '#FFB347' },
+    strength: { bg: 'rgba(62,220,176,0.18)', color: '#3EDCB0' },
+    yoga:     { bg: 'rgba(176,111,232,0.18)', color: '#B06FE8' },
+  };
+  return map[cat] || { bg: '#222', color: '#888' };
+}
+
+document.getElementById('generateBtn').addEventListener('click', () => {
+  const warmup = pickFrom(videos.warmup, 5);
+  const main = pickFrom(videos.main, 45);
+  const cooldown = pickFrom(videos.cooldown, 10);
+  const all = [...warmup, ...main, ...cooldown];
+  const total = all.reduce((s, v) => s + v.duration, 0);
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('playlistSection').style.display = 'block';
+
+  const pct = Math.min(100, Math.round((total / 60) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('timerTotal').textContent = total + ' min';
+
+  const catLabel = activeFilter === 'all' ? 'Mixed Styles' : activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1);
+  document.getElementById('playlistLabel').textContent = `▶ YOUR ${catLabel.toUpperCase()} PLAYLIST · ${all.length} VIDEOS`;
+
+  const container = document.getElementById('playlist');
+  container.innerHTML = '';
+
+  const sections = [
+    { label: '🌿 Warm Up', cls: 'warmup-label', items: warmup },
+    { label: '🔥 Main Workout', cls: 'main-label', items: main },
+    { label: '🌙 Cool Down', cls: 'cool-label', items: cooldown },
+  ];
+
+  let idx = 1;
+  sections.forEach(sec => {
+    const div = document.createElement('div');
+    div.className = 'segment-divider';
+    div.innerHTML = `<div class="seg-line"></div><span class="seg-label ${sec.cls}">${sec.label}</span><div class="seg-line"></div>`;
+    container.appendChild(div);
+
+    sec.items.forEach(v => {
+      const tc = tagColors(v.cat);
+      const delay = (idx - 1) * 60;
+      const card = document.createElement('a');
+      card.className = 'workout-card';
+      card.href = ytSearchUrl(v.search);
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.style.animationDelay = delay + 'ms';
+      card.innerHTML = `
+        <span class="card-num">${idx}</span>
+        <div class="tag-dot" style="background:${tc.bg}">${v.emoji}</div>
+        <div class="card-info">
+          <div class="card-title">${v.title}</div>
+          <div class="card-meta">
+            <span>${v.channel}</span>
+            <span class="meta-tag" style="color:${tc.color}">${v.cat}</span>
+          </div>
+        </div>
+        <span class="card-duration">${v.duration}m</span>
+        <a class="yt-btn" href="${ytSearchUrl(v.search)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">▶ Watch</a>
+      `;
+      container.appendChild(card);
+      idx++;
+    });
+  });
+});
+</script>
+</body>
+</html>
